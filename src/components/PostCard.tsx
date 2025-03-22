@@ -14,7 +14,6 @@ import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import DeleteAlertDialog from "./DeleteAlertDialog";
-import Image from "next/image";
 import { Button } from "./ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -148,7 +147,7 @@ const PostCard = ({
           {/* Image */}
           {post.image && (
             <div className="rounded-lg overflow-hidden">
-              <Image
+              <img
                 src={post.image}
                 alt="post content"
                 className="w-full h-auto object-conver"

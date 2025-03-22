@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import ModeToggle from "./ModeToggle";
 import {
   Sheet,
@@ -10,11 +10,21 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Button } from "./ui/button";
-import { BellIcon, HomeIcon, LogOutIcon, MenuIcon, UserIcon } from "lucide-react";
+import {
+  BellIcon,
+  HomeIcon,
+  LogOutIcon,
+  MenuIcon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { SignInButton, SignOutButton, useAuth } from "@clerk/nextjs";
 
-const MobileNavbar = () => {
+interface MobileNavbarProps {
+  username?: string;
+}
+
+const MobileNavbar = ({ username }:MobileNavbarProps) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { isSignedIn } = useAuth();
 
@@ -32,7 +42,12 @@ const MobileNavbar = () => {
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col space-y-4 mt-3">
-            <Button variant="ghost" className="flex items-center gap-2 justify-start" asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 justify-start"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              asChild
+            >
               <Link href={"/"}>
                 <HomeIcon className="size-4" />
                 <span>Home</span>
@@ -43,6 +58,7 @@ const MobileNavbar = () => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 justify-start"
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
                   asChild
                 >
                   <Link href={"/notifications"}>
@@ -53,9 +69,10 @@ const MobileNavbar = () => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 justify-start"
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
                   asChild
                 >
-                  <Link href={`/profile`}>
+                  <Link href={`/profile/${username}`}>
                     <UserIcon className="size-4" />
                     <span>Profile</span>
                   </Link>
@@ -64,15 +81,18 @@ const MobileNavbar = () => {
                   <Button
                     variant={"ghost"}
                     className="flex items-center gap-3 justify-start w-full"
+                    onClick={() => setShowMobileMenu(!showMobileMenu)}
                   >
-                    <LogOutIcon className="size-4"/>
+                    <LogOutIcon className="size-4" />
                     Logout
                   </Button>
                 </SignOutButton>
               </>
             ) : (
               <SignInButton mode="modal">
-                <Button onClick={()=>setShowMobileMenu(!showMobileMenu)}>Sign In</Button>
+                <Button onClick={() => setShowMobileMenu(!showMobileMenu)}>
+                  Sign In
+                </Button>
               </SignInButton>
             )}
           </nav>

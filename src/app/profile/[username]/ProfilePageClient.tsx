@@ -6,13 +6,31 @@ import {
   updateProfile,
 } from "@/actions/profile.action";
 import { toggleFollow } from "@/actions/user.action";
+import PostCard from "@/components/PostCard";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
-import { CalendarIcon, EditIcon, LinkIcon, MapPinIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  EditIcon,
+  FileTextIcon,
+  HeartIcon,
+  LinkIcon,
+  MapPinIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -79,7 +97,7 @@ const ProfilePageClient = ({
     <div className="max-w-3xl mx-auto">
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full max-w-lg mx-auto">
-          <Card className="bg-card">
+          <Card>
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center">
                 <Avatar className="size-24">
@@ -92,7 +110,7 @@ const ProfilePageClient = ({
                 <p className="text-muted-foreground">@{user.username}</p>
                 <p className="text-sm mt-2">{user.bio}</p>
                 <div className="w-full mt-6">
-                  <div className="flex justify-between mb-4">
+                  <div className="flex justify-around mb-4">
                     <div>
                       <div className="font-semibold">
                         {user._count.following.toLocaleString()}
@@ -167,7 +185,7 @@ const ProfilePageClient = ({
                     </div>
                   )}
                   <div className="flex items-center text-muted-foreground">
-                    <CalendarIcon className="size-4 mr-2"/>
+                    <CalendarIcon className="size-4 mr-2" />
                     Joined {formattedDate}
                   </div>
                 </div>
@@ -175,6 +193,112 @@ const ProfilePageClient = ({
             </CardContent>
           </Card>
         </div>
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b rounded-none">
+            <TabsTrigger
+              value="posts"
+              className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
+               data-[state=active]:bg-transparent px-6 font-semibold"
+            >
+              <FileTextIcon className="size-4" />
+              Posts
+            </TabsTrigger>
+            <TabsTrigger
+              value="likes"
+              className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
+               data-[state=active]:bg-transparent px-6 font-semibold"
+            >
+              <HeartIcon className="size-4" />
+              Likes
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="posts" className="mt-6">
+            <div className="space-y-6">
+              {posts.length > 0 ? (
+                posts.map((post) => (
+                  <PostCard key={post.id} post={post} dbUserId={user.id} />
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No Posts Yet
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="likes" className="mt-6">
+            <div className="space-y-6">
+              {likedPosts.length > 0 ? (
+                likedPosts.map((post) => (
+                  <PostCard key={post.id} post={post} dbUserId={user.id} />
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No Liked Posts to show
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Edit Profile</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Name</Label>
+                <Input
+                  name="name"
+                  value={editForm.name}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, name: e.target.value })
+                  }
+                  placeholder="Your name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Bio</Label>
+                <Input
+                  name="bio"
+                  value={editForm.bio}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, bio: e.target.value })
+                  }
+                  placeholder="Tell us about Yourself"
+                  className="min-h-[100px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Location</Label>
+                <Input
+                  name="location"
+                  value={editForm.location}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, location: e.target.value })
+                  }
+                  placeholder="Where are you based?"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Website</Label>
+                <Input
+                  name="website"
+                  value={editForm.website}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, website: e.target.value })
+                  }
+                  placeholder="Your personal website"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3">
+              <DialogClose asChild>
+                <Button variant={"outline"}>Cancel</Button>
+              </DialogClose>
+              <Button onClick={handleEditSubmit}>Save Changes</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

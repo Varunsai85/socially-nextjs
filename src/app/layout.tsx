@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "sonner";
+// import "@uploadthing/react/styles.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
