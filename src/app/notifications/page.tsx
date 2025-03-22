@@ -30,20 +30,21 @@ const getNotificationIcon = (type: string) => {
   }
 };
 
-const page = () => {
+const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [notifications, setnotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       setIsLoading(true);
       try {
         const data = await getAllNotifications();
-        setnotifications(data);
+        setNotifications(data);
 
         const unreadIds = data.filter((n) => !n.read).map((n) => n.id);
         if (unreadIds.length > 0) await markNotificationsRead(unreadIds);
       } catch (error) {
+        console.error(error)
         toast.error("Failed to fetch notifications");
       } finally {
         setIsLoading(false);
@@ -142,4 +143,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
