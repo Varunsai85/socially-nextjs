@@ -52,7 +52,6 @@ export async function getUserByClerkId(clerkId: string) {
         },
       },
     });
-
     return userDetails;
   } catch (error) {
     console.log("Error in getUserByClerkId", error);
@@ -65,9 +64,9 @@ export async function getDbUserId() {
 
   const user = await getUserByClerkId(clerkId);
 
-  if (!user) throw new Error("User Not found");
+  // if (!user) throw new Error("User Not found");
 
-  return user.id;
+  return user?.id??null;
 }
 
 export async function getRandomUsers() {

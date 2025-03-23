@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-import { getUserByClerkId } from "@/actions/user.action";
+import { getUserByClerkId, syncUser } from "@/actions/user.action";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Separator } from "./ui/separator";
@@ -12,9 +12,35 @@ const Sidebar = async () => {
   const authUser = await currentUser();
   if (!authUser) return <UnauthenticatedSidebar />;
 
-  const user = await getUserByClerkId(authUser.id);
-  if (!user) return null;
+  await syncUser();
 
+  let user;
+  try {
+    user = await getUserByClerkId(authUser.id);
+  } catch (error) {
+    console.error("Sidebar: Failed to fetch user:", error);
+    return (
+      <div className="sticky top-20">
+        <Card>
+          <CardContent className="pt-6">
+            <p>Error loading profile. Please try again.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!user?.id) {
+    return (
+      <div className="sticky top-20">
+        <Card>
+          <CardContent className="pt-6">
+            <p>Loading profile...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="sticky top-20">
       <Card>
