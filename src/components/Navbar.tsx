@@ -2,12 +2,12 @@ import Link from "next/link";
 import React from "react";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
-import { currentUser } from "@clerk/nextjs/server";
-import { syncUser } from "@/actions/user.action";
 
-const Navbar = async () => {
-  const user = await currentUser();
-  if (user) await syncUser();
+interface NavbarProps{
+  dbUser:any;
+}
+
+const Navbar = async ({dbUser:user}:NavbarProps) => {
 
   const userName=user?.username||user?.emailAddresses[0].emailAddress.split("@")[0];
 

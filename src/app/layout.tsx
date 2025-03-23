@@ -6,7 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "sonner";
-// import "@uploadthing/react/styles.css";
+import { currentUser } from "@clerk/nextjs/server";
+import { syncUser } from "@/actions/user.action";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +24,16 @@ export const metadata: Metadata = {
   description: "A Modern Social Media application powered by Nextjs",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const authUser=await currentUser();
+  let dbUser=null;
+  if(authUser){
+    dbUser=await syncUser();
+  }
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
@@ -41,7 +47,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <div className="min-h-screen">
-                <Navbar />
+                <Navbar dbUser={dbUser} />
                 <main className="py-8 ">
                   <div className="max-w-7xl mx-auto px-4">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
