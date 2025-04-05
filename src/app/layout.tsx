@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import { Toaster } from "sonner";
 import { currentUser } from "@clerk/nextjs/server";
 import { syncUser } from "@/actions/user.action";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authUser=await currentUser();
-  let dbUser=null;
-  if(authUser){
-    dbUser=await syncUser();
+  const authUser = await currentUser();
+  let dbUser = null;
+  if (authUser) {
+    dbUser = await syncUser();
   }
   return (
     <ClerkProvider>
@@ -40,27 +41,28 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="min-h-screen">
-                <Navbar dbUser={dbUser} />
-                <main className="py-8 ">
-                  <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                      <div className="hidden lg:block lg:col-span-3">
-                        <Sidebar />
-                      </div>
-                      <div className="lg:col-span-9">{children}</div>
+          <NextTopLoader showSpinner={false} height={3} />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="min-h-screen">
+              <Navbar dbUser={dbUser} />
+              <main className="py-8 ">
+                <div className="max-w-7xl mx-auto px-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div className="hidden lg:block lg:col-span-3">
+                      <Sidebar />
                     </div>
+                    <div className="lg:col-span-9">{children}</div>
                   </div>
-                </main>
-              </div>
-            </ThemeProvider>
-            <Toaster richColors />
+                </div>
+              </main>
+            </div>
+          </ThemeProvider>
+          <Toaster richColors />
         </body>
       </html>
     </ClerkProvider>
