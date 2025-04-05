@@ -41,7 +41,7 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <NextTopLoader showSpinner={false} height={3} crawl={false}/>
+          <NextTopLoader showSpinner={false} height={3} crawl={true} crawlSpeed={1000} />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
